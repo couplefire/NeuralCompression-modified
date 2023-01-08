@@ -18,12 +18,12 @@ from neuralcompress.models.bcae_combine import BCAECombine
 #################################################################
 # =================== Compress and decompress ===================
 # Load data
-data_path   = Path('./data')
+data_path   = Path('../outer')
 data_config = {
-    'batch_size' : 4,
+    'batch_size' : 8,
     'train_sz'   : 0,
     'valid_sz'   : 0,
-    'test_sz'    : 8, # there are only 8 data files contained
+    'test_sz'    : 512, # there are only 8 data files contained
     'is_random'  : False,
     'shuffle'    : False,
 }
@@ -33,11 +33,22 @@ device = 'cuda'
 
 # Load encoder
 checkpoint_path = Path('checkpoints')
-epoch           = 2000
+epoch           = 'final'
 encoder = load_bcae_encoder(checkpoint_path, epoch)
 decoder = load_bcae_decoder(checkpoint_path, epoch)
 encoder.to(device)
 decoder.to(device)
+encoder.eval()
+decoder.eval()
+encoder.half()
+
+def debug(self, input, output):
+    for i in range(input[0].data.size()[1]):
+        print(input[0].data.select(1, i).mean())
+    print(self.running_mean)
+    print()
+
+#encoder.module.layers[0].main_block[1].register_forward_hook(debug)
 
 # run compression and decompression
 combine = BCAECombine()
@@ -52,6 +63,7 @@ progbar = tqdm.tqdm(
 with torch.no_grad():
     for batch in loader:
         batch  = batch.to(device)
+        batch  = batch.half()
 
         comp   = encoder(batch)
         comp   = comp.half() # we save the compressed result as half float

@@ -38,9 +38,9 @@ def load_bcae_model(checkpoint_path, epoch, model_type):
     model_fname = locate(checkpoint_path, epoch, model_type)
 
     if model_type == 'encoder':
-        model = BCAEEncoder()
+        model = torch.nn.DataParallel(BCAEEncoder())
     else:
-        model = BCAEDecoder()
+        model = torch.nn.DataParallel(BCAEDecoder())
     model.load_state_dict(torch.load(model_fname))
 
     return model

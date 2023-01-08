@@ -2,7 +2,7 @@ from neuralcompress.procedures.train import train
 from neuralcompress.models.bcae_trainer import BCAETrainer
 
 
-data_path   = '/data/datasets/sphenix/highest_framedata_3d/outer'
+data_path   = '/home/qircai/NeuralCompression/outer'
 data_config = {
     'batch_size' : 32,
     'train_sz'   : 960,
@@ -12,7 +12,7 @@ data_config = {
 }
 epochs      = 2000
 valid_freq  = 5
-save_path   = '/home/yhuang2/PROJs/NeuralCompression_results/checkpoints/'
+save_path   = '/home/qircai/NeuralCompression/checkpoints/'
 save_freq   = 20
 
 train(

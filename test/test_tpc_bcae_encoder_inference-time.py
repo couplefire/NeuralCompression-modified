@@ -11,7 +11,7 @@ from time import time
 if __name__ == '__main__':
     
     config = {
-        'data_path': '/data/datasets/sphenix/highest_framedata_3d/outer',
+        'data_path': '/home/qircai/NeuralCompression/outer',
         'data': {
             'batch_size' : int(sys.argv[1]),
             'train_sz'   : 2560,

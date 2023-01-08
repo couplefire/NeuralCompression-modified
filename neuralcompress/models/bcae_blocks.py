@@ -28,7 +28,7 @@ def single_block(block_type, block_args, activ, norm):
     elif block_type == 'deconv':
         layer = nn.ConvTranspose3d(**block_args)
 
-    return nn.Sequential(layer, activ, norm)
+    return nn.Sequential(layer, norm, activ)
 
 
 def double_block(block_type, block_args, activ, norm):
@@ -61,7 +61,7 @@ def double_block(block_type, block_args, activ, norm):
         padding     = 1
     )
 
-    layer_list = list(block_1) + [block_2]
+    layer_list = list(block_1) + [block_2] + [nn.BatchNorm3d(block_args['out_channels'])]
     return nn.Sequential(*layer_list)
 
 
@@ -76,7 +76,6 @@ class TPCResidualBlock(nn.Module):
         main_block,
         side_block,
         activ,
-        norm,
         rezero = True
     ):
         """
@@ -99,7 +98,6 @@ class TPCResidualBlock(nn.Module):
         self.side_block = side_block
 
         self.activ = activ
-        self.norm  = norm
 
         if rezero:
             self.rezero_alpha = nn.Parameter(torch.zeros((1, )))
@@ -116,29 +114,27 @@ class TPCResidualBlock(nn.Module):
         x_side   = self.side_block(x_input)
         x_main   = self.main_block(x_input)
         x_output = self.rezero_alpha * x_main + x_side
-        return self.norm(self.activ(x_output))
+        return self.activ(x_output)
 
 
-def encoder_residual_block(conv_args, activ, norm, rezero=True):
+def encoder_residual_block(conv_args, activ, rezero=True):
     """
     Get an encoder residual block.
     """
     return TPCResidualBlock(
-        main_block = double_block('conv', conv_args, activ, norm),
-        side_block = single_block('conv', conv_args, activ, norm),
+        main_block = double_block('conv', conv_args, activ, nn.BatchNorm3d(conv_args['out_channels'])),
+        side_block = single_block('conv', conv_args, activ, nn.BatchNorm3d(conv_args['out_channels'])),
         activ      = activ,
-        norm       = norm,
         rezero     = rezero
     )
 
-def decoder_residual_block(deconv_args, activ, norm, rezero=True):
+def decoder_residual_block(deconv_args, activ, rezero=True):
     """
     Get an decoder residual block.
     """
     return TPCResidualBlock(
-        main_block = double_block('deconv', deconv_args, activ, norm),
-        side_block = single_block('deconv', deconv_args, activ, norm),
+        main_block = double_block('deconv', deconv_args, activ, nn.BatchNorm3d(deconv_args['out_channels'])),
+        side_block = single_block('deconv', deconv_args, activ, nn.BatchNorm3d(deconv_args['out_channels'])),
         activ      = activ,
-        norm       = norm,
         rezero     = rezero
     )

@@ -1,0 +1,8 @@
+data/sample_0.npy
+data/sample_1.npy
+data/sample_2.npy
+data/sample_3.npy
+data/sample_4.npy
+data/sample_5.npy
+data/sample_6.npy
+data/sample_7.npy

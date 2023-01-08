@@ -17,7 +17,7 @@ from neuralcompress.utils.tpc_dataloader import get_tpc_dataloaders
 
 
 
-DATA_ROOT = '/data/datasets/sphenix/highest_framedata_3d/outer'
+DATA_ROOT = '/home/qircai/NeuralCompression/outer'
 
 def inference():
 

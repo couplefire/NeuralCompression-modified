@@ -1,0 +1,18 @@
+,1
+checkpoint,checkpoints/encoder_final.pt
+num_runs,10
+benchmark,True
+with_loader,False
+data_root,
+data_size,4096
+batch_size,512
+pin_memory,False
+num_workers,0
+prefetch_factor,2
+half_precision,False
+memory allocated (MB),11997.8291015625
+memory reserved  (MB),29812.0
+max memory allocated (MB),26877.8359375
+max memory reserved  (MB),29812.0
+frames per second,1429.4382301589467
+std,216.03403323803445

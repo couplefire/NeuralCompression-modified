@@ -39,6 +39,8 @@ class AutoencoderTrainer:
         self.decoder  = decoder
         self.loss     = loss
         self.is_train = True
+        self.encoder  = torch.nn.DataParallel(self.encoder)
+        self.decoder  = torch.nn.DataParallel(self.decoder)
 
         self.device = device
         self.encoder.to(device)

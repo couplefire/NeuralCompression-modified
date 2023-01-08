@@ -17,7 +17,6 @@ class DecoderOneHead(nn.Module):
         input_channels,
         deconv_args_list,
         activ,
-        norm_fn,
         output_channels,
         output_activ,
         output_norm,
@@ -52,7 +51,6 @@ class DecoderOneHead(nn.Module):
             layer = decoder_residual_block(
                 deconv_args,
                 activ,
-                norm_fn(deconv_args['out_channels']),
                 rezero=rezero
             )
 
@@ -127,8 +125,7 @@ class BCAEDecoder(nn.Module):
         }
         output_channels  = 1
         deconv_args_list = (deconv_1, deconv_2, deconv_3, deconv_4)
-        activ            = nn.LeakyReLU(negative_slope=.2)
-        norm_fn          = nn.InstanceNorm3d
+        activ            = nn.LeakyReLU(negative_slope=.25)
         input_channels   = 8
         rezero           = True
 
@@ -137,7 +134,6 @@ class BCAEDecoder(nn.Module):
             'input_channels'   : input_channels,
             'deconv_args_list' : deconv_args_list,
             'activ'            : activ,
-            'norm_fn'          : norm_fn,
             'output_channels'  : output_channels
         }
         self.decoder_c = DecoderOneHead(

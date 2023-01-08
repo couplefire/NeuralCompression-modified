@@ -7,6 +7,7 @@ from neuralcompress.models.bcae_blocks import (
     encoder_residual_block,
 )
 
+
 class BCAEEncoder(nn.Module):
     """
     Encoder with a few downsampling layers plus an output layer.
@@ -50,8 +51,7 @@ class BCAEEncoder(nn.Module):
 
         input_channels  = 1
         conv_args_list  = (conv_1, conv_2, conv_3, conv_4)
-        activ           = nn.LeakyReLU(negative_slope=.2)
-        norm_fn         = nn.InstanceNorm3d
+        activ           = nn.LeakyReLU(negative_slope=.25)
         output_channels = 8
         rezero          = True
 
@@ -63,7 +63,6 @@ class BCAEEncoder(nn.Module):
             layer = encoder_residual_block(
                 conv_args,
                 activ,
-                norm_fn(conv_args['out_channels']),
                 rezero=rezero
             )
 
@@ -77,7 +76,7 @@ class BCAEEncoder(nn.Module):
             'kernel_size'  : 3,
             'padding'      : 1
         }
-        norm = norm_fn(output_channels)
+        norm = nn.BatchNorm3d(output_channels)
         output_layer = single_block('conv', block_args, activ, norm)
         self.layers.add_module('encoder_output', output_layer)
 
@@ -89,6 +88,7 @@ class BCAEEncoder(nn.Module):
             - D, H, W: the three spatial dimensions
         """
         return self.layers(input_x)
+
 
 if __name__ == "__main__":
     print("This is the main of bcae_encoder.py")
